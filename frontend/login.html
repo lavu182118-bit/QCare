@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f8fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: #2563eb;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 35px;
+        }
+
+        .box {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .box h1 {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .box > p {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .option {
+            display: block;
+            padding: 30px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .option h2 {
+            margin-bottom: 8px;
+            font-size: 21px;
+        }
+
+        .option p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .patient {
+            border-top: 4px solid #2563eb;
+        }
+
+        .hospital {
+            border-top: 4px solid #16a34a;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 25px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .box {
+                padding: 25px 18px;
+            }
+
+            .logo {
+                font-size: 29px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">
+            🏥 Queue<span>Care</span>
+        </div>
+
+        <p class="subtitle">
+            Smart Hospital Queue & Appointment Management
+        </p>
+
+
+        <div class="box">
+
+            <h1>
+                Login As
+            </h1>
+
+            <p>
+                Choose your account type to continue
+            </p>
+
+
+            <div class="options">
+
+                <a
+                    href="patient-login.html"
+                    class="option patient">
+
+                    <div class="icon">
+                        👤
+                    </div>
+
+                    <h2>
+                        Patient
+                    </h2>
+
+                    <p>
+                        Book appointments, track your token,
+                        view queue status and notifications.
+                    </p>
+
+                </a>
+
+
+                <a
+                    href="hospital login.html"
+                    class="option hospital">
+
+                    <div class="icon">
+                        🏥
+                    </div>
+
+                    <h2>
+                        Hospital
+                    </h2>
+
+                    <p>
+                        Manage doctors, patients and
+                        hospital queues.
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <a
+                href="index.html"
+                class="back">
+
+                ← Back to Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

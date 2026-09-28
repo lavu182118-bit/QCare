@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Profile - QueueCare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #0b5ed7;
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 22px;
+        }
+
+        .back-btn {
+            background: white;
+            color: #0b5ed7;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .profile-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            background: #f8f9fa;
+            font-size: 15px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>QueueCare</h2>
+        <button class="back-btn" onclick="goBack()">← Dashboard</button>
+    </div>
+
+    <div class="container">
+
+        <div class="profile-card">
+
+            <h2 class="profile-title">Hospital Profile</h2>
+
+            <div class="field">
+                <label>Hospital ID</label>
+                <input type="text" id="hospitalId" readonly>
+            </div>
+
+            <div class="field">
+                <label>Hospital Name</label>
+                <input type="text" id="hospitalName" readonly>
+            </div>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="text" id="hospitalEmail" readonly>
+            </div>
+
+            <div class="field">
+                <label>Phone</label>
+                <input type="text" id="hospitalPhone" readonly>
+            </div>
+
+            <div class="field">
+                <label>Address</label>
+                <input type="text" id="hospitalAddress" readonly>
+            </div>
+
+            <div class="field">
+                <label>Status</label>
+                <span class="status" id="hospitalStatus">Loading...</span>
+            </div>
+            <button
+    id="deactivateBtn"
+    onclick="deactivateHospital()"
+    style="
+        margin-top: 20px;
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 8px;
+        background: #ef4444;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    ">
+
+    Deactivate Hospital
+
+</button>
+<button
+    id="reactivationBtn"
+    onclick="requestReactivation()"
+    style="
+        margin-top: 12px;
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        display: none;
+    ">
+
+    Request Reactivation
+
+</button>
+
+            <div class="message" id="message"></div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const hospitalData =
+            JSON.parse(localStorage.getItem("hospitalData"));
+
+        if (!hospitalData) {
+
+            alert("Hospital login required.");
+
+            window.location.href =
+                "hospital login.html";
+
+        } else {
+
+            document.getElementById("hospitalId").value =
+                hospitalData.hospital_id || hospitalData.id || "";
+
+            document.getElementById("hospitalName").value =
+                hospitalData.name || "";
+
+            document.getElementById("hospitalEmail").value =
+                hospitalData.email || "";
+
+            document.getElementById("hospitalPhone").value =
+                hospitalData.phone || "";
+
+            document.getElementById("hospitalAddress").value =
+                hospitalData.address || "";
+
+            document.getElementById("hospitalStatus").textContent =
+                hospitalData.status || "Active";
+        }
+
+        function goBack() {
+
+            window.location.href =
+                "hospital-dashboard.html";
+        }
+async function deactivateHospital() {
+
+    const hospitalData =
+        JSON.parse(
+            localStorage.getItem("hospitalData")
+        );
+
+    if (!hospitalData || !hospitalData.id) {
+
+        alert("Hospital information not found. Please login again.");
+        return;
+
+    }
+
+    const confirmDeactivate =
+        confirm(
+            "Are you sure you want to deactivate this hospital?"
+        );
+
+    if (!confirmDeactivate) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/deactivate-hospital/" + hospitalData.id,
+                {
+                    method: "PUT"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+            return;
+
+        }
+
+        alert(
+    "Hospital deactivated successfully."
+);
+
+hospitalData.status =
+    "Deactivated";
+
+localStorage.setItem(
+    "hospitalData",
+    JSON.stringify(hospitalData)
+);
+
+window.location.href =
+    "hospital login.html";
+
+return;
+
+        localStorage.setItem(
+            "hospitalData",
+            JSON.stringify(hospitalData)
+        );
+
+        document.getElementById(
+            "hospitalStatus"
+        ).textContent =
+            "Deactivated";
+
+        document.getElementById(
+            "deactivateBtn"
+        ).disabled = true;
+
+        document.getElementById(
+            "deactivateBtn"
+        ).textContent =
+            "Hospital Deactivated";
+
+    }
+    catch (error) {
+
+        console.error(
+            "Deactivation error:",
+            error
+        );
+
+        alert(
+            "Unable to deactivate hospital."
+        );
+
+    }
+
+}
+async function requestReactivation() {
+
+    const hospitalData =
+        JSON.parse(
+            localStorage.getItem("hospitalData")
+        );
+
+    if (!hospitalData || !hospitalData.id) {
+
+        alert(
+            "Hospital information not found. Please login again."
+        );
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/request-reactivation/" + hospitalData.id,
+                {
+                    method: "POST"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+            return;
+
+        }
+
+        alert(
+            "Reactivation request sent to Admin successfully."
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Reactivation request error:",
+            error
+        );
+
+        alert(
+            "Unable to connect to QCare server."
+        );
+
+    }
+
+}
+// Show Request Reactivation button for deactivated hospital
+
+const profileHospitalData =
+    JSON.parse(
+        localStorage.getItem("hospitalData")
+    );
+
+if (
+    profileHospitalData &&
+    profileHospitalData.status === "Deactivated"
+) {
+
+    document.getElementById(
+        "reactivationBtn"
+    ).style.display = "block";
+
+    document.getElementById(
+        "deactivateBtn"
+    ).style.display = "none";
+
+}
+    </script>
+
+</body>
+</html>

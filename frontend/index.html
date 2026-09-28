@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 8%;
+            gap: 40px;
+        }
+
+        .hero-text {
+            max-width: 550px;
+        }
+
+        .hero-text h1 {
+            font-size: 48px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+            margin-left: 10px;
+        }
+
+        .queue-card {
+            background: white;
+            width: 330px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        }
+
+        .queue-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .status {
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .number {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           MOBILE RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 25px;
+            }
+
+            nav {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            nav a {
+                margin-left: 0;
+                font-size: 14px;
+            }
+
+            .hero {
+                min-height: auto;
+                flex-direction: column;
+                padding: 40px 20px;
+                gap: 35px;
+                text-align: center;
+            }
+
+            .hero-text {
+                max-width: 100%;
+            }
+
+            .hero-text h1 {
+                font-size: 34px;
+                line-height: 1.2;
+                margin-bottom: 18px;
+            }
+
+            .hero-text p {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 25px;
+            }
+
+            .btn {
+                width: 100%;
+                display: block;
+                padding: 14px 20px;
+            }
+
+            .secondary {
+                margin-left: 0;
+                margin-top: 12px;
+            }
+
+            .queue-card {
+                width: 100%;
+                max-width: 400px;
+                padding: 25px;
+            }
+
+            .queue-card h2 {
+                font-size: 23px;
+            }
+
+            .number {
+                font-size: 32px;
+            }
+
+            footer {
+                font-size: 13px;
+                padding: 20px;
+            }
+
+        }
+
+
+        /* =========================
+           SMALL MOBILE
+        ========================= */
+
+        @media (max-width: 400px) {
+
+            .hero {
+                padding: 30px 16px;
+            }
+
+            .hero-text h1 {
+                font-size: 30px;
+            }
+
+            .hero-text p {
+                font-size: 15px;
+            }
+
+            .queue-card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <header>
+
+        <div class="logo">
+            🏥 QueueCare
+        </div>
+
+
+        <nav>
+
+            <a href="#">
+                Home
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <section class="hero">
+
+
+        <div class="hero-text">
+
+            <h1>
+                Smart Hospital Queue Management
+            </h1>
+
+
+            <p>
+                Book your token, track your queue and know your
+                estimated waiting time — all in one place.
+            </p>
+
+
+            <a
+                href="patient-login.html"
+                class="btn primary">
+
+                Get Your Token
+
+            </a>
+
+
+            <a
+                href="patient-login.html"
+                class="btn secondary">
+
+                Track Queue
+
+            </a>
+
+        </div>
+
+
+        <div class="queue-card">
+
+            <h2>
+                Live Queue
+            </h2>
+
+
+            <select
+                id="homeHospital"
+                style="
+                    width:100%;
+                    padding:14px;
+                    border:1px solid #d1d5db;
+                    border-radius:10px;
+                    font-size:16px;
+                    margin-bottom:20px;
+                    background:white;
+                "
+            >
+
+                <option value="">
+                    Choose Hospital
+                </option>
+
+            </select>
+
+
+            <div
+                id="queueMessage"
+                style="
+                    text-align:center;
+                    color:#6b7280;
+                    padding:15px 5px;
+                "
+            >
+
+                🏥 Choose a hospital to view live queue status
+
+            </div>
+
+
+            <div
+                id="liveQueueData"
+                style="display:none;"
+            >
+
+                <div class="status">
+
+                    Current Token
+
+                    <div
+                        class="number"
+                        id="currentToken"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="status">
+
+                    Patients Ahead
+
+                    <div
+                        class="number"
+                        id="patientsAhead"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="status">
+
+                    Estimated Wait
+
+                    <div
+                        class="number"
+                        id="estimatedWait"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        © 2026 QueueCare — Smart Healthcare Queue System
+
+    </footer>
+
+
+    <script>
+
+
+        /* =====================================
+           LOAD REGISTERED HOSPITALS
+        ===================================== */
+
+        async function loadHomeHospitals() {
+
+            const hospitalSelect =
+                document.getElementById("homeHospital");
+
+
+            try {
+
+                const response =
+                    await fetch("/hospitals");
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    data.success &&
+                    data.hospitals &&
+                    data.hospitals.length > 0
+                ) {
+
+                    hospitalSelect.innerHTML =
+                        '<option value="">Choose Hospital</option>';
+
+
+                    data.hospitals.forEach(
+                        hospital => {
+
+                            const option =
+                                document.createElement("option");
+
+
+                            /*
+                             * IMPORTANT:
+                             * Use hospital ID here
+                             * because MySQL live_queue
+                             * uses hospital_id.
+                             */
+
+                            option.value =
+                                hospital.id;
+
+
+                            option.textContent =
+                                hospital.name;
+
+
+                            hospitalSelect.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+                } else {
+
+                    hospitalSelect.innerHTML =
+                        '<option value="">No hospitals registered</option>';
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Hospital loading error:",
+                    error
+                );
+
+
+                hospitalSelect.innerHTML =
+                    '<option value="">Unable to load hospitals</option>';
+
+            }
+
+        }
+
+
+        /* =====================================
+           SHOW LIVE QUEUE FROM MYSQL
+        ===================================== */
+
+        async function showLiveQueue() {
+
+            const hospitalId =
+                document.getElementById(
+                    "homeHospital"
+                ).value;
+
+
+            const message =
+                document.getElementById(
+                    "queueMessage"
+                );
+
+
+            const liveData =
+                document.getElementById(
+                    "liveQueueData"
+                );
+
+
+            /* NO HOSPITAL SELECTED */
+
+            if (!hospitalId) {
+
+                liveData.style.display =
+                    "none";
+
+
+                message.style.display =
+                    "block";
+
+
+                message.textContent =
+                    "🏥 Choose a hospital to view live queue status";
+
+
+                return;
+
+            }
+
+
+            /* SHOW LOADING */
+
+            message.style.display =
+                "block";
+
+
+            liveData.style.display =
+                "none";
+
+
+            message.textContent =
+                "⏳ Loading live queue...";
+
+
+            try {
+
+                /*
+                 * Get queue directly from MySQL
+                 */
+
+                const response =
+                    await fetch(
+                        "/live-queue/" +
+                        hospitalId
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !data.success ||
+                    !data.queue
+                ) {
+
+                    message.textContent =
+                        "Unable to load live queue.";
+
+                    return;
+
+                }
+
+
+                const queue =
+                    data.queue;
+
+
+                /* SHOW LIVE DATA */
+
+                message.style.display =
+                    "none";
+
+
+                liveData.style.display =
+                    "block";
+
+
+                /* =====================================
+                   WAITING PATIENTS
+                ===================================== */
+
+                const waitingPatients =
+                    queue.filter(
+                        patient =>
+                        patient.status === "Waiting"
+                    );
+
+
+                /* =====================================
+                   CURRENT TOKEN
+                ===================================== */
+
+                let currentToken =
+                    "--";
+
+
+                /*
+                 * Find the latest patient who is
+                 * no longer Waiting.
+                 */
+
+                const completedPatients =
+                    queue.filter(
+                        patient =>
+                        patient.status === "Completed"
+                    );
+
+
+                if (
+                    completedPatients.length > 0
+                ) {
+
+                    currentToken =
+                        completedPatients[
+                            completedPatients.length - 1
+                        ].token;
+
+                }
+
+
+                /* =====================================
+                   DISPLAY
+                ===================================== */
+
+                document.getElementById(
+                    "currentToken"
+                ).textContent =
+                    currentToken;
+
+
+                document.getElementById(
+                    "patientsAhead"
+                ).textContent =
+                    waitingPatients.length;
+
+
+                document.getElementById(
+                    "estimatedWait"
+                ).textContent =
+                    (
+                        waitingPatients.length * 5
+                    ) + " min";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Live queue loading error:",
+                    error
+                );
+
+
+                message.style.display =
+                    "block";
+
+
+                liveData.style.display =
+                    "none";
+
+
+                message.textContent =
+                    "Unable to load live queue.";
+
+            }
+
+        }
+
+
+        /* =====================================
+           HOSPITAL SELECTION
+        ===================================== */
+
+        document
+            .getElementById("homeHospital")
+            .addEventListener(
+                "change",
+                showLiveQueue
+            );
+
+
+        /* =====================================
+           LOAD HOSPITALS
+        ===================================== */
+
+        loadHomeHospitals();
+
+    </script>
+
+
+</body>
+</html>

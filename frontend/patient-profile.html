@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - My Profile</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #2563eb;
+        }
+
+        .back {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #6b7280;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+        }
+
+        .profile-top {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            margin: auto;
+            border-radius: 50%;
+            background: #e8f0fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .profile-top h2 {
+            margin-bottom: 5px;
+        }
+
+        .profile-top p {
+            color: #6b7280;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .detail {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .account-type {
+            color: #2563eb;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 17px 20px;
+            }
+
+            .container {
+                margin: 30px auto;
+            }
+
+            .profile-card {
+                padding: 22px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            🏥 Queue<span>Care</span>
+        </div>
+
+        <a
+            href="patient-dashboard.html"
+            class="back">
+
+            ← Dashboard
+
+        </a>
+
+    </header>
+
+
+    <div class="container">
+
+        <div class="heading">
+
+            <h1>
+                My Profile
+            </h1>
+
+            <p>
+                Your QueueCare account information
+            </p>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <div class="profile-top">
+
+                <div class="profile-icon">
+                    👤
+                </div>
+
+                <h2 id="profileName">
+                    Patient
+                </h2>
+
+                <p>
+                    QueueCare Patient
+                </p>
+
+            </div>
+
+
+            <div class="details">
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        👤 Name
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="name">
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        📱 Phone Number
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="phone">
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        📧 Email ID
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="email">
+                        Not provided
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        🆔 Patient ID
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="patientId">
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        👤 Account Type
+                    </div>
+
+                    <div
+                        class="detail-value account-type">
+                        Patient
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <div class="detail-label">
+                        🏥 Registered Hospital
+                    </div>
+
+                    <div
+                        class="detail-value"
+                        id="hospital">
+                        Not booked yet
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="message"
+            id="message">
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================
+           LOGIN CHECK
+        ========================= */
+
+        const patient =
+            JSON.parse(
+                localStorage.getItem(
+                    "currentPatient"
+                )
+            );
+
+
+        if (!patient) {
+
+            window.location.href =
+                "patient-login.html";
+
+        }
+
+
+        /* =========================
+           DISPLAY PATIENT DETAILS
+        ========================= */
+
+        if (patient) {
+
+            const name =
+                patient.name || "Not provided";
+
+            const phone =
+                patient.phone || "Not provided";
+
+            const email =
+                patient.email || "Not provided";
+
+
+            document.getElementById(
+                "profileName"
+            ).textContent = name;
+
+
+            document.getElementById(
+                "name"
+            ).textContent = name;
+
+
+            document.getElementById(
+                "phone"
+            ).textContent = phone;
+
+
+            document.getElementById(
+                "email"
+            ).textContent = email;
+
+
+            /* =========================
+               PATIENT ID
+            ========================= */
+
+            let patientId =
+                localStorage.getItem(
+                    "patientId"
+                );
+
+
+            if (!patientId) {
+
+                patientId =
+                    "QC-P-" +
+                    Date.now();
+
+                localStorage.setItem(
+                    "patientId",
+                    patientId
+                );
+
+            }
+
+
+            document.getElementById(
+                "patientId"
+            ).textContent = patientId;
+
+
+            /* =========================
+               REGISTERED HOSPITAL
+            ========================= */
+
+            const queue =
+                JSON.parse(
+                    localStorage.getItem(
+                        "queue"
+                    )
+                ) || [];
+
+
+            const patientAppointment =
+                queue.find(
+                    item =>
+                        item.phone ===
+                        patient.phone
+                );
+
+
+            if (
+                patientAppointment &&
+                patientAppointment.hospital
+            ) {
+
+                document.getElementById(
+                    "hospital"
+                ).textContent =
+                    patientAppointment.hospital;
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

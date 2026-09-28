@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - Patient Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-box">
+
+
+    <div class="logo">
+        🏥 QueueCare
+    </div>
+
+
+    <h1>
+        Patient Login
+    </h1>
+
+
+    <p class="subtitle">
+        Login to manage your hospital queue
+    </p>
+
+
+    <form onsubmit="patientLogin(event)">
+
+
+        <label for="patientName">
+            Patient Name
+        </label>
+
+
+        <input
+            type="text"
+            id="patientName"
+            placeholder="Enter your name"
+            required
+        >
+
+
+        <label for="patientPhone">
+            Phone Number
+        </label>
+
+
+        <input
+            type="tel"
+            id="patientPhone"
+            placeholder="Enter phone number"
+            maxlength="10"
+            inputmode="numeric"
+            required
+        >
+
+
+        <button type="submit">
+            Login
+        </button>
+
+
+    </form>
+
+
+    <div
+        class="message"
+        id="message">
+    </div>
+
+
+    <a
+        href="index.html"
+        class="back">
+
+        ← Back to Home
+
+    </a>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================
+   PATIENT LOGIN
+===================================== */
+
+function patientLogin(event) {
+
+    event.preventDefault();
+
+
+    const name =
+        document
+            .getElementById("patientName")
+            .value
+            .trim();
+
+
+    const phone =
+        document
+            .getElementById("patientPhone")
+            .value
+            .trim();
+
+
+    const message =
+        document.getElementById("message");
+
+
+    /* ===============================
+       VALIDATION
+    =============================== */
+
+    if (name === "" || phone === "") {
+
+        message.textContent =
+            "Please enter all details.";
+
+        message.style.color =
+            "#dc2626";
+
+        return;
+
+    }
+
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+
+        message.textContent =
+            "Please enter a valid 10-digit phone number.";
+
+        message.style.color =
+            "#dc2626";
+
+        return;
+
+    }
+
+
+    /* ===============================
+       CREATE PATIENT SESSION
+    =============================== */
+
+    const patient = {
+
+        name: name,
+
+        phone: phone
+
+    };
+
+
+    localStorage.setItem(
+        "patientLoggedIn",
+        "true"
+    );
+
+
+    localStorage.setItem(
+        "patientName",
+        name
+    );
+
+
+    localStorage.setItem(
+        "patientPhone",
+        phone
+    );
+
+
+    localStorage.setItem(
+        "patient",
+        JSON.stringify(patient)
+    );
+
+
+    /*
+       Dashboard uses currentPatient.
+       So store the same patient there.
+    */
+
+    localStorage.setItem(
+        "currentPatient",
+        JSON.stringify(patient)
+    );
+
+
+    /* ===============================
+       SUCCESS MESSAGE
+    =============================== */
+
+    message.textContent =
+        "Login successful!";
+
+    message.style.color =
+        "#16a34a";
+
+
+    /* ===============================
+       OPEN DASHBOARD
+    =============================== */
+
+    setTimeout(function () {
+
+        window.location.href =
+            "patient-dashboard.html";
+
+    }, 500);
+
+}
+
+</script>
+
+
+</body>
+
+</html>

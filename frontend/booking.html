@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QCare - Get Token</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: white;
+            padding: 20px 8%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 22px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .success {
+            margin-top: 20px;
+            padding: 18px;
+            background: #f0fdf4;
+            border-radius: 12px;
+            color: #166534;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            🏥 QCare
+        </div>
+
+    </header>
+
+
+    <div class="container">
+
+        <h1>
+            Get Your Token
+        </h1>
+
+        <p class="subtitle">
+            Select your hospital and doctor to join the queue.
+        </p>
+
+
+        <!-- ===============================
+             HOSPITAL
+        ================================ -->
+
+        <label for="hospital">
+            Select Hospital
+        </label>
+
+        <select id="hospital">
+
+            <option value="">
+                Choose Hospital
+            </option>
+
+        </select>
+
+
+        <!-- ===============================
+             DOCTOR
+        ================================ -->
+
+        <label for="doctor">
+            Select Doctor
+        </label>
+
+        <select id="doctor">
+
+            <option value="">
+                Choose Doctor
+            </option>
+
+            <option value="General Physician">
+                General Physician
+            </option>
+
+            <option value="Cardiologist">
+                Cardiologist
+            </option>
+
+            <option value="Orthopedic">
+                Orthopedic
+            </option>
+
+            <option value="Dermatologist">
+                Dermatologist
+            </option>
+
+        </select>
+
+
+        <!-- ===============================
+             PATIENT
+        ================================ -->
+
+        <label for="patient">
+            Patient Name
+        </label>
+
+        <input
+            type="text"
+            id="patient"
+            placeholder="Enter patient name"
+        >
+
+
+        <button
+            id="tokenButton"
+            onclick="getToken()">
+
+            🎫 Get Token
+
+        </button>
+
+
+        <!-- ===============================
+             SUCCESS
+        ================================ -->
+
+        <div
+            class="success"
+            id="success">
+        </div>
+
+
+        <a
+            href="patient-dashboard.html"
+            class="back">
+
+            ← Back to Patient Dashboard
+
+        </a>
+
+    </div>
+
+
+    <script>
+
+
+    /* =====================================
+       LOAD REGISTERED HOSPITALS
+    ===================================== */
+
+    async function loadHospitals() {
+
+        const hospitalSelect =
+            document.getElementById("hospital");
+
+
+        hospitalSelect.innerHTML =
+            '<option value="">Loading hospitals...</option>';
+
+
+        try {
+
+            const response =
+                await fetch("/hospitals");
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to fetch hospitals."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            hospitalSelect.innerHTML =
+                '<option value="">Choose Hospital</option>';
+
+
+            if (
+                data.success &&
+                data.hospitals &&
+                data.hospitals.length > 0
+            ) {
+
+                data.hospitals.forEach(
+                    hospital => {
+
+                        const option =
+                            document.createElement("option");
+
+
+                        /*
+                           IMPORTANT:
+
+                           VALUE = DATABASE ID
+
+                           This prevents duplicate
+                           hospital names from causing
+                           wrong hospital routing.
+                        */
+
+                        option.value =
+                            hospital.id;
+
+
+                        /*
+                           NAME SHOWN TO PATIENT
+                        */
+
+                        option.textContent =
+                            hospital.name;
+
+
+                        /*
+                           SAVE HOSPITAL NAME
+                        */
+
+                        option.dataset.name =
+                            hospital.name;
+
+
+                        hospitalSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+            } else {
+
+                hospitalSelect.innerHTML =
+                    '<option value="">No hospitals registered</option>';
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Hospital loading error:",
+                error
+            );
+
+
+            hospitalSelect.innerHTML =
+                '<option value="">Unable to load hospitals</option>';
+
+        }
+
+    }
+
+
+
+    /* =====================================
+       GET TOKEN
+    ===================================== */
+
+    async function getToken() {
+
+
+        const hospitalSelect =
+            document.getElementById("hospital");
+
+
+        /*
+           DATABASE HOSPITAL ID
+        */
+
+        const hospitalId =
+            hospitalSelect.value;
+
+
+        /*
+           SELECTED HOSPITAL OPTION
+        */
+
+        const selectedOption =
+            hospitalSelect.options[
+                hospitalSelect.selectedIndex
+            ];
+
+
+        /*
+           HOSPITAL NAME
+        */
+
+        const hospital =
+            selectedOption
+                ? selectedOption.dataset.name || ""
+                : "";
+
+
+        /*
+           DOCTOR
+        */
+
+        const doctor =
+            document.getElementById(
+                "doctor"
+            ).value;
+
+
+        /*
+           PATIENT NAME
+        */
+
+        const patient =
+            document
+                .getElementById("patient")
+                .value
+                .trim();
+
+
+
+        /* =====================================
+           GET EXISTING PATIENT INFORMATION
+        ===================================== */
+
+        let savedPatient = {};
+
+
+        try {
+
+            savedPatient =
+                JSON.parse(
+                    localStorage.getItem(
+                        "currentPatient"
+                    )
+                ) || {};
+
+        } catch (error) {
+
+            savedPatient = {};
+
+        }
+
+
+        const patientPhone =
+            savedPatient.phone || "";
+
+
+
+        /* =====================================
+           VALIDATION
+        ===================================== */
+
+        if (
+            hospitalId === "" ||
+            doctor === "" ||
+            patient === ""
+        ) {
+
+            alert(
+                "Please fill all the details."
+            );
+
+            return;
+
+        }
+
+
+
+        /* =====================================
+           DISABLE BUTTON
+        ===================================== */
+
+        const tokenButton =
+            document.getElementById(
+                "tokenButton"
+            );
+
+
+        tokenButton.disabled = true;
+
+
+        tokenButton.textContent =
+            "Generating Token...";
+
+
+
+        /* =====================================
+           GET LOCAL QUEUE
+        ===================================== */
+
+        let queue = [];
+
+
+        try {
+
+            queue =
+                JSON.parse(
+                    localStorage.getItem(
+                        "queue"
+                    )
+                ) || [];
+
+        } catch (error) {
+
+            queue = [];
+
+        }
+
+
+
+        /* =====================================
+           SAVE PATIENT TO MYSQL
+        ===================================== */
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "/live-queue",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            /*
+                               SEND DATABASE
+                               HOSPITAL ID
+                            */
+
+                            hospitalId:
+                                Number(
+                                    hospitalId
+                                ),
+
+                            patient:
+                                patient,
+
+                            phone:
+                                patientPhone,
+
+                            doctor:
+                                doctor
+
+                        })
+
+                    }
+                );
+
+
+
+            /* =====================================
+               READ SERVER RESPONSE
+            ===================================== */
+
+            const data =
+                await response.json();
+
+
+
+            /* =====================================
+               CHECK SERVER RESPONSE
+            ===================================== */
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                console.error(
+                    "MySQL live queue error:",
+                    data.message
+                );
+
+
+                alert(
+                    data.message ||
+                    "Unable to generate token."
+                );
+
+
+                return;
+
+            }
+
+
+
+            /* =====================================
+               BACKEND TOKEN IS AUTHORITATIVE
+            ===================================== */
+
+            const token =
+                data.token;
+
+
+
+            /*
+               USE DATABASE HOSPITAL NAME
+               IF AVAILABLE
+            */
+
+            const finalHospital =
+                data.hospitalName ||
+                hospital;
+
+
+
+            console.log(
+                "Patient successfully added to MySQL live queue."
+            );
+
+
+            console.log(
+                "Hospital ID:",
+                hospitalId
+            );
+
+
+            console.log(
+                "Hospital:",
+                finalHospital
+            );
+
+
+            console.log(
+                "Backend Token:",
+                token
+            );
+
+
+
+            /* =====================================
+               CREATE PATIENT DATA
+            ===================================== */
+
+            const newPatient = {
+
+                token:
+                    token,
+
+                name:
+                    patient,
+
+                phone:
+                    patientPhone,
+
+                hospital:
+                    finalHospital,
+
+                hospitalId:
+                    Number(hospitalId),
+
+                doctor:
+                    doctor,
+
+                status:
+                    "Waiting",
+
+                time:
+                    new Date().toLocaleString()
+
+            };
+
+
+
+            /* =====================================
+               ADD TO LOCAL QUEUE
+            ===================================== */
+
+            queue.push(
+                newPatient
+            );
+
+
+            localStorage.setItem(
+                "queue",
+                JSON.stringify(
+                    queue
+                )
+            );
+
+
+
+            /* =====================================
+               SAVE CURRENT PATIENT
+            ===================================== */
+
+            localStorage.setItem(
+                "currentPatient",
+                JSON.stringify(
+                    newPatient
+                )
+            );
+
+
+
+            /* =====================================
+               SUCCESS MESSAGE
+            ===================================== */
+
+            const success =
+                document.getElementById(
+                    "success"
+                );
+
+
+            success.style.display =
+                "block";
+
+
+            success.innerHTML =
+                "✅ Token Generated!<br><br>" +
+
+                "Token: " +
+                token +
+
+                "<br>" +
+
+                "Patient: " +
+                patient +
+
+                "<br>" +
+
+                "Hospital: " +
+                finalHospital +
+
+                "<br>" +
+
+                "Doctor: " +
+                doctor;
+
+
+
+            /* =====================================
+               CLEAR PATIENT NAME
+            ===================================== */
+
+            document.getElementById(
+                "patient"
+            ).value = "";
+
+
+
+        } catch (error) {
+
+            console.error(
+                "QueueCare server error:",
+                error
+            );
+
+
+            alert(
+                "Unable to connect to QueueCare server."
+            );
+
+
+        } finally {
+
+            /*
+               ENABLE BUTTON AGAIN
+            */
+
+            tokenButton.disabled =
+                false;
+
+
+            tokenButton.textContent =
+                "🎫 Get Token";
+
+        }
+
+    }
+
+
+
+    /* =====================================
+       LOAD HOSPITALS WHEN PAGE OPENS
+    ===================================== */
+
+    loadHospitals();
+
+    </script>
+
+</body>
+</html>

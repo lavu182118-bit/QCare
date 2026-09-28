@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QCare - Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        header span {
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 6px;
+        }
+
+        .welcome p {
+            color: #6b7280;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .hospital-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .hospital-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .hospital-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .hospital-info {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .status {
+            height: fit-content;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .deactivated {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            color: #6b7280;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #2563eb;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #eff6ff;
+        }
+
+        @media (max-width: 800px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hospital-top {
+                flex-direction: column;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            header {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin-top: 20px;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>QCare Admin</h1>
+
+    <div>
+        <span id="adminName">Admin</span>
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+            Logout
+        </button>
+    </div>
+
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+
+        <h2>Admin Dashboard</h2>
+
+        <p>
+            Manage hospitals and monitor the QCare system.
+        </p>
+
+    </div>
+
+    <!-- SYSTEM STATS -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3>Total Hospitals</h3>
+
+            <div
+                class="number"
+                id="totalHospitals">
+                0
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Pending Hospitals</h3>
+
+            <div
+                class="number"
+                id="pendingHospitals">
+                0
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Active Hospitals</h3>
+
+            <div
+                class="number"
+                id="activeHospitals">
+                0
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Deactivated Hospitals</h3>
+
+            <div
+                class="number"
+                id="deactivatedHospitals">
+                0
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HOSPITAL LIST -->
+
+    <div class="section">
+
+        <h2>Registered Hospitals</h2>
+
+        <div id="hospitalList">
+
+            <div class="empty">
+                Loading hospitals...
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PENDING REACTIVATION REQUESTS -->
+
+    <div class="section">
+
+        <h2>Pending Reactivation Requests</h2>
+
+        <div id="reactivationRequests">
+
+            <div class="empty">
+                Loading reactivation requests...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // ===============================
+    // ADMIN LOGIN CHECK
+    // ===============================
+
+    const adminLoggedIn =
+        localStorage.getItem("adminLoggedIn");
+
+    if (adminLoggedIn !== "true") {
+
+        window.location.href =
+            "admin-login.html";
+
+    }
+
+
+    // ===============================
+    // ADMIN NAME
+    // ===============================
+
+    const adminData =
+        JSON.parse(
+            localStorage.getItem("adminData")
+        );
+
+    if (adminData && adminData.name) {
+
+        document.getElementById(
+            "adminName"
+        ).textContent =
+            adminData.name;
+
+    }
+
+
+    // ===============================
+    // LOAD HOSPITALS
+    // ===============================
+
+    async function loadHospitals() {
+
+        try {
+
+            const response =
+                await fetch("/admin/hospitals");
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                document.getElementById(
+                    "hospitalList"
+                ).innerHTML =
+                    '<div class="empty">' +
+                    data.message +
+                    '</div>';
+
+                return;
+
+            }
+
+            const hospitals =
+                data.hospitals;
+
+            updateStats(hospitals);
+
+            displayHospitals(hospitals);
+
+        }
+        catch (error) {
+
+            console.error(
+                "Hospital loading error:",
+                error
+            );
+
+            document.getElementById(
+                "hospitalList"
+            ).innerHTML =
+                '<div class="empty">' +
+                'Unable to connect to QCare server.' +
+                '</div>';
+
+        }
+
+    }
+
+
+    // ===============================
+    // UPDATE STATS
+    // ===============================
+
+    function updateStats(hospitals) {
+
+        const total =
+            hospitals.length;
+
+        const pending =
+            hospitals.filter(
+                hospital =>
+                    hospital.status === "Pending"
+            ).length;
+
+        const active =
+            hospitals.filter(
+                hospital =>
+                    hospital.status === "Active"
+            ).length;
+
+        const deactivated =
+            hospitals.filter(
+                hospital =>
+                    hospital.status === "Deactivated"
+            ).length;
+
+        document.getElementById(
+            "totalHospitals"
+        ).textContent =
+            total;
+
+        document.getElementById(
+            "pendingHospitals"
+        ).textContent =
+            pending;
+
+        document.getElementById(
+            "activeHospitals"
+        ).textContent =
+            active;
+
+        document.getElementById(
+            "deactivatedHospitals"
+        ).textContent =
+            deactivated;
+
+    }
+
+
+    // ===============================
+    // DISPLAY HOSPITALS
+    // ===============================
+
+    function displayHospitals(hospitals) {
+
+        const hospitalList =
+            document.getElementById(
+                "hospitalList"
+            );
+
+        if (hospitals.length === 0) {
+
+            hospitalList.innerHTML =
+                '<div class="empty">' +
+                'No hospitals registered.' +
+                '</div>';
+
+            return;
+
+        }
+
+        hospitalList.innerHTML = "";
+
+        hospitals.forEach(hospital => {
+
+            let statusClass =
+                "pending";
+
+            if (hospital.status === "Active") {
+
+                statusClass =
+                    "active";
+
+            }
+
+            if (hospital.status === "Deactivated") {
+
+                statusClass =
+                    "deactivated";
+
+            }
+
+            if (hospital.status === "Rejected") {
+
+                statusClass =
+                    "rejected";
+
+            }
+
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "hospital-card";
+
+
+            let actionButton = "";
+
+
+            // ===============================
+            // PENDING HOSPITAL
+            // ===============================
+
+            if (hospital.status === "Pending") {
+
+                actionButton = `
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:10px;
+                            margin-top:15px;
+                        ">
+
+                        <button
+                            onclick="approveHospital(${hospital.id})"
+                            style="
+                                flex:1;
+                                padding:11px;
+                                border:none;
+                                border-radius:8px;
+                                background:#16a34a;
+                                color:white;
+                                font-size:14px;
+                                font-weight:bold;
+                                cursor:pointer;
+                            ">
+                            Approve Hospital
+                        </button>
+
+                        <button
+                            onclick="rejectHospital(${hospital.id})"
+                            style="
+                                flex:1;
+                                padding:11px;
+                                border:none;
+                                border-radius:8px;
+                                background:#dc2626;
+                                color:white;
+                                font-size:14px;
+                                font-weight:bold;
+                                cursor:pointer;
+                            ">
+                            Reject Hospital
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            // ===============================
+            // ACTIVE HOSPITAL
+            // ===============================
+
+            else if (hospital.status === "Active") {
+
+                actionButton = `
+
+                    <button
+                        onclick="deactivateHospital(${hospital.id})"
+                        style="
+                            margin-top:15px;
+                            width:100%;
+                            padding:11px;
+                            border:none;
+                            border-radius:8px;
+                            background:#dc2626;
+                            color:white;
+                            font-size:14px;
+                            font-weight:bold;
+                            cursor:pointer;
+                        ">
+                        Deactivate Hospital
+                    </button>
+
+                `;
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="hospital-top">
+
+                    <div>
+
+                        <div class="hospital-name">
+                            ${hospital.name}
+                        </div>
+
+                        <div class="hospital-info">
+
+                            Hospital ID:
+                            ${hospital.hospital_id || hospital.id}
+                            <br>
+
+                            Email:
+                            ${hospital.email || "Not provided"}
+                            <br>
+
+                            Phone:
+                            ${hospital.phone || "Not provided"}
+                            <br>
+
+                            Address:
+                            ${hospital.address || "Not provided"}
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="status ${statusClass}">
+                        ${hospital.status || "Pending"}
+                    </div>
+
+                </div>
+
+            `;
+
+            card.innerHTML += actionButton;
+
+            hospitalList.appendChild(card);
+
+        });
+
+    }
+
+
+    // ===============================
+    // APPROVE HOSPITAL
+    // ===============================
+
+    async function approveHospital(hospitalId) {
+
+        const confirmApproval =
+            confirm(
+                "Are you sure you want to approve this hospital?"
+            );
+
+        if (!confirmApproval) {
+
+            return;
+
+        }
+
+        try {
+
+            const response =
+                await fetch(
+    "http://localhost:3000/admin/approve-hospital/" + hospitalId,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            alert(
+                data.message ||
+                "Hospital approved successfully."
+            );
+
+            loadHospitals();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Hospital approval error:",
+                error
+            );
+
+            alert(
+                "Unable to connect to QCare server."
+            );
+
+        }
+
+    }
+    // ===============================
+    // REJECT HOSPITAL
+    // ===============================
+
+    async function rejectHospital(hospitalId) {
+
+        const confirmRejection =
+            confirm(
+                "Are you sure you want to reject this hospital?"
+            );
+
+        if (!confirmRejection) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "/admin/reject-hospital/" +
+                    hospitalId,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            alert(
+                data.message ||
+                "Hospital rejected successfully."
+            );
+
+            loadHospitals();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Hospital rejection error:",
+                error
+            );
+
+            alert(
+                "Unable to connect to QCare server."
+            );
+
+        }
+
+    }
+
+
+    // ===============================
+    // DEACTIVATE HOSPITAL
+    // ===============================
+
+    async function deactivateHospital(hospitalId) {
+
+        const confirmDeactivation =
+            confirm(
+                "Are you sure you want to deactivate this hospital?"
+            );
+
+        if (!confirmDeactivation) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "/deactivate-hospital/" +
+                    hospitalId,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            alert(
+                data.message ||
+                "Hospital deactivated successfully."
+            );
+
+            loadHospitals();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Hospital deactivation error:",
+                error
+            );
+
+            alert(
+                "Unable to connect to QCare server."
+            );
+
+        }
+
+    }
+
+
+    // ===============================
+    // LOAD REACTIVATION REQUESTS
+    // ===============================
+
+    async function loadReactivationRequests() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/admin/reactivation-requests"
+                );
+
+            const data =
+                await response.json();
+
+            const container =
+                document.getElementById(
+                    "reactivationRequests"
+                );
+
+            if (!data.success) {
+
+                container.innerHTML =
+                    `<div class="empty">
+                        ${data.message}
+                    </div>`;
+
+                return;
+
+            }
+
+            if (data.requests.length === 0) {
+
+                container.innerHTML =
+                    `<div class="empty">
+                        No pending reactivation requests.
+                    </div>`;
+
+                return;
+
+            }
+
+            container.innerHTML = "";
+
+            data.requests.forEach(request => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "hospital-card";
+
+                card.innerHTML = `
+
+                    <div class="hospital-top">
+
+                        <div>
+
+                            <div class="hospital-name">
+                                ${request.name}
+                            </div>
+
+                            <div class="hospital-info">
+
+                                Hospital ID:
+                                ${request.hospital_code}
+                                <br>
+
+                                Email:
+                                ${request.email || "N/A"}
+                                <br>
+
+                                Phone:
+                                ${request.phone || "N/A"}
+                                <br>
+
+                                Request Status:
+                                ${request.status}
+
+                            </div>
+
+                        </div>
+
+                        <div class="status pending">
+                            Pending
+                        </div>
+
+                        <button
+                            onclick="approveReactivation(${request.id})"
+                            style="
+                                margin-top:15px;
+                                width:100%;
+                                padding:11px;
+                                border:none;
+                                border-radius:8px;
+                                background:#16a34a;
+                                color:white;
+                                font-size:14px;
+                                font-weight:bold;
+                                cursor:pointer;
+                            ">
+                            Approve & Reactivate
+                        </button>
+
+                    </div>
+
+                `;
+
+                container.appendChild(card);
+
+            });
+
+        }
+        catch (error) {
+
+            console.error(
+                "Reactivation request loading error:",
+                error
+            );
+
+            document.getElementById(
+                "reactivationRequests"
+            ).innerHTML =
+                `<div class="empty">
+                    Unable to connect to QCare server.
+                </div>`;
+
+        }
+
+    }
+
+
+    // ===============================
+    // APPROVE REACTIVATION
+    // ===============================
+
+    async function approveReactivation(requestId) {
+
+        const confirmApproval =
+            confirm(
+                "Are you sure you want to reactivate this hospital?"
+            );
+
+        if (!confirmApproval) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "/admin/approve-reactivation/" +
+                    requestId,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            alert(
+                data.message ||
+                "Hospital reactivated successfully."
+            );
+
+            loadHospitals();
+            loadReactivationRequests();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Reactivation approval error:",
+                error
+            );
+
+            alert(
+                "Unable to connect to QCare server."
+            );
+
+        }
+
+    }
+    // ===============================
+    // LOGOUT
+    // ===============================
+
+    function logout() {
+
+        localStorage.removeItem("adminLoggedIn");
+        localStorage.removeItem("adminData");
+
+        window.location.href = "admin-login.html";
+
+    }
+
+
+    // ===============================
+    // START ADMIN DASHBOARD
+    // ===============================
+
+    loadHospitals();
+    loadReactivationRequests();
+
+</script>
+
+</body>
+</html>

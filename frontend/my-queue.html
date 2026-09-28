@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - My Queue</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .live {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #15803d;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+            max-width: 950px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        /* =========================
+           HEADING
+        ========================= */
+
+        .heading {
+            margin-bottom: 28px;
+        }
+
+        .heading h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* =========================
+           MAIN CARD
+        ========================= */
+
+        .main-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+            margin-bottom: 25px;
+            border: 1px solid #eef2f7;
+        }
+
+        /* =========================
+           TOKEN SECTION
+        ========================= */
+
+        .token-section {
+            text-align: center;
+            padding: 10px 20px 25px;
+        }
+
+        .token-label {
+            color: #6b7280;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .token {
+            font-size: 52px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .doctor {
+            color: #4b5563;
+            font-size: 16px;
+        }
+
+        .hospital {
+            margin-top: 9px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        /* =========================
+           DETAILS
+        ========================= */
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 10px;
+        }
+
+        .detail-card {
+            background: #f8fafc;
+            padding: 22px;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .detail-card p {
+            color: #6b7280;
+            margin-bottom: 9px;
+            font-size: 14px;
+        }
+
+        .detail-card strong {
+            font-size: 25px;
+            color: #111827;
+        }
+
+        /* =========================
+           QUEUE STATUS
+        ========================= */
+
+        .queue-status {
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+        }
+
+        .queue-status h2 {
+            margin-bottom: 9px;
+            font-size: 21px;
+        }
+
+        .queue-status p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .queue-status strong {
+            color: #2563eb;
+        }
+
+        .note {
+            margin-top: 18px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 28px auto 0;
+            padding: 14px 22px;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           NO QUEUE
+        ========================= */
+
+        .no-queue {
+            text-align: center;
+            padding: 50px 30px;
+        }
+
+        .no-queue .icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .no-queue h2 {
+            margin-bottom: 10px;
+        }
+
+        .no-queue p {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .container {
+                margin: 30px auto;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .token {
+                font-size: 43px;
+            }
+
+            .main-card {
+                padding: 22px;
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            header {
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .live {
+                font-size: 11px;
+            }
+
+            .heading h1 {
+                font-size: 27px;
+            }
+
+            .token {
+                font-size: 38px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="logo">
+        🏥 QCare
+    </div>
+
+    <div class="live">
+
+        <span class="live-dot"></span>
+
+        Live Queue
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         HEADING
+    ========================= -->
+
+    <div class="heading">
+
+        <h1>
+            My Queue
+        </h1>
+
+        <p>
+            Track your hospital queue in real time.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         QUEUE CONTENT
+    ========================= -->
+
+    <div id="queueContent"></div>
+
+
+    <!-- =========================
+         BACK BUTTON
+    ========================= -->
+
+    <a
+        href="patient-dashboard.html"
+        class="back-button">
+
+        ← Back to Patient Dashboard
+
+    </a>
+
+
+</div>
+
+
+<script>
+
+
+function loadMyQueue() {
+
+
+    /* =====================================
+       GET CURRENT PATIENT
+    ===================================== */
+
+    const currentPatient =
+        JSON.parse(
+            localStorage.getItem(
+                "currentPatient"
+            )
+        );
+
+
+    const queue =
+        JSON.parse(
+            localStorage.getItem(
+                "queue"
+            )
+        ) || [];
+
+
+    const content =
+        document.getElementById(
+            "queueContent"
+        );
+
+
+    /* =====================================
+       NO CURRENT PATIENT
+    ===================================== */
+
+    if (!currentPatient) {
+
+        content.innerHTML = `
+
+            <div class="main-card no-queue">
+
+                <div class="icon">
+                    📋
+                </div>
+
+                <h2>
+                    No Active Queue
+                </h2>
+
+                <p>
+                    You have not joined a hospital queue yet.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =====================================
+       FIND PATIENT IN QUEUE
+    ===================================== */
+
+    const patientIndex =
+        queue.findIndex(
+            patient =>
+
+                patient.token ===
+                currentPatient.token
+
+                &&
+
+                patient.name ===
+                currentPatient.name
+        );
+
+
+    /* =====================================
+       PATIENT ALREADY CALLED
+    ===================================== */
+
+    if (patientIndex === -1) {
+
+        content.innerHTML = `
+
+            <div class="main-card">
+
+                <div class="queue-status">
+
+                    <h2>
+                        🔔 Your turn may have been called
+                    </h2>
+
+                    <p>
+
+                        Your token was:
+
+                        <strong>
+                            ${currentPatient.token}
+                        </strong>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =====================================
+       PATIENT DETAILS
+    ===================================== */
+
+    const patient =
+        queue[patientIndex];
+
+
+    const doctor =
+        patient.doctor;
+
+
+    const hospital =
+        patient.hospital;
+
+
+    /* =====================================
+       DOCTOR QUEUE
+    ===================================== */
+
+    const doctorQueue =
+        queue.filter(
+            item =>
+
+                item.doctor ===
+                doctor
+
+                &&
+
+                item.hospital ===
+                hospital
+        );
+
+
+    /* =====================================
+       POSITION
+    ===================================== */
+
+    const position =
+        doctorQueue.findIndex(
+            item =>
+
+                item.token ===
+                patient.token
+
+                &&
+
+                item.name ===
+                patient.name
+        );
+
+
+    const patientsAhead =
+        position >= 0
+        ? position
+        : 0;
+
+
+    /* =====================================
+       WAIT TIME
+       5 MINUTES PER PATIENT
+    ===================================== */
+
+    const waitTime =
+        patientsAhead * 5;
+
+
+    /* =====================================
+       CURRENTLY SERVING
+    ===================================== */
+
+    let currentlyServing =
+        "--";
+
+
+    if (
+        doctorQueue.length > 0
+    ) {
+
+        currentlyServing =
+            doctorQueue[0].token;
+
+    }
+
+
+    /* =====================================
+       DISPLAY QUEUE
+    ===================================== */
+
+    content.innerHTML = `
+
+        <div class="main-card">
+
+
+            <div class="token-section">
+
+                <div class="token-label">
+                    Your Token
+                </div>
+
+                <div class="token">
+                    ${patient.token}
+                </div>
+
+                <div class="doctor">
+                    👨‍⚕️ ${doctor}
+                </div>
+
+                <div class="hospital">
+                    🏥 ${hospital}
+                </div>
+
+            </div>
+
+
+            <div class="details">
+
+
+                <div class="detail-card">
+
+                    <p>
+                        Patients Ahead
+                    </p>
+
+                    <strong>
+                        ${patientsAhead}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-card">
+
+                    <p>
+                        Estimated Wait
+                    </p>
+
+                    <strong>
+                        ${waitTime} min
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-card">
+
+                    <p>
+                        Currently Serving
+                    </p>
+
+                    <strong>
+                        ${currentlyServing}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="main-card">
+
+            <div class="queue-status">
+
+                <h2>
+                    🟢 You're in the Queue
+                </h2>
+
+                <p>
+
+                    Please stay nearby.
+                    Your queue position will update
+                    as patients are called.
+
+                </p>
+
+            </div>
+
+
+            <div class="note">
+
+                🔄 Queue position and waiting time
+                update automatically.
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================
+   LOAD PAGE
+===================================== */
+
+loadMyQueue();
+
+
+/* =====================================
+   AUTO UPDATE EVERY 5 SECONDS
+===================================== */
+
+setInterval(
+    loadMyQueue,
+    5000
+);
+
+
+</script>
+
+
+</body>
+
+</html>

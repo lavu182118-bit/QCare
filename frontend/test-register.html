@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QueueCare Test</title>
+</head>
+<body>
+
+<h2>QueueCare Registration Test</h2>
+
+<button onclick="testRegister()">Test Registration</button>
+
+<p id="result"></p>
+
+<script>
+async function testRegister() {
+
+    try {
+
+        const response = await fetch("/register-hospital", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: "Test Hospital",
+                email: "test123@example.com",
+                phone: "9876543210",
+                address: "Mysuru",
+                password: "test1234"
+            })
+        });
+
+        const data = await response.text();
+
+document.getElementById("result").textContent = data;
+    } catch (error) {
+
+        document.getElementById("result").textContent =
+            "ERROR: " + error.message;
+
+    }
+}
+</script>
+
+</body>
+</html>

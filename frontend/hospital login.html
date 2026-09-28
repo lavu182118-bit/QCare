@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - Hospital Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eef6ff;
+        }
+
+        .login-box {
+            width: 380px;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1769aa;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 8px;
+            background: #1769aa;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d4f82;
+        }
+
+        #error {
+            color: red;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register a {
+            color: #1769aa;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .reactivation-button {
+            background: #16a34a !important;
+            margin-top: 15px;
+        }
+
+        .reactivation-button:hover {
+            background: #15803d !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h1>QueueCare</h1>
+
+        <p class="subtitle">Hospital Login</p>
+
+        <form onsubmit="login(event)">
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter hospital email"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                required
+            >
+<div class="forgot-password">
+    <a href="forgot-password.html">
+        Forgot Password?
+    </a>
+</div>
+            <button type="submit">
+                Login
+            </button>
+
+            <div id="error"></div>
+
+        </form>
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="hospital-register.html">
+                Register Hospital
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function login(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const error =
+                document.getElementById("error");
+
+            error.textContent = "";
+
+
+            // Remove old reactivation button
+            const oldButton =
+                document.getElementById(
+                    "reactivationButton"
+                );
+
+            if (oldButton) {
+                oldButton.remove();
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/hospital-login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.success) {
+
+                    localStorage.setItem(
+                        "hospitalLoggedIn",
+                        "true"
+                    );
+
+                    localStorage.setItem(
+                        "hospitalName",
+                        data.hospital.name
+                    );
+
+                    localStorage.setItem(
+                        "hospitalData",
+                        JSON.stringify(
+                            data.hospital
+                        )
+                    );
+
+                    window.location.href =
+                        "hospital-dashboard.html";
+
+                } else {
+
+                    error.textContent =
+                        data.message ||
+                        "Invalid email or password.";
+
+
+                    // ==========================================
+                    // DEACTIVATED HOSPITAL
+                    // ==========================================
+
+                    if (
+                        data.message ===
+                        "Your hospital account is deactivated."
+                    ) {
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+                        button.type =
+                            "button";
+
+                        button.id =
+                            "reactivationButton";
+
+                        button.textContent =
+                            "Request Reactivation";
+
+                        button.className =
+                            "reactivation-button";
+
+
+                        button.onclick =
+                            function () {
+
+                                requestReactivation(
+                                    email
+                                );
+
+                            };
+
+
+                        document
+                            .querySelector(
+                                ".login-box"
+                            )
+                            .appendChild(
+                                button
+                            );
+                    }
+                }
+
+
+            } catch (err) {
+
+                console.error(
+                    "Hospital login error:",
+                    err
+                );
+
+                error.textContent =
+                    "Unable to connect to QueueCare server.";
+
+            }
+
+        }
+
+
+        async function requestReactivation(email) {
+
+    try {
+
+        const response = await fetch(
+            "/request-reactivation",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email
+                })
+            }
+        );
+
+        const text = await response.text();
+
+        console.log("Reactivation status:", response.status);
+        console.log("Reactivation response:", text);
+
+        let data;
+
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            alert(
+                "Server response:\n\n" +
+                text +
+                "\n\nStatus: " +
+                response.status
+            );
+            return;
+        }
+
+        alert(
+            data.message ||
+            "Reactivation request submitted."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Reactivation error:",
+            error
+        );
+
+        alert(
+            "Unable to connect to QueueCare server.\n\n" +
+            error.message
+        );
+    }
+}
+
+    </script>
+
+</body>
+</html>

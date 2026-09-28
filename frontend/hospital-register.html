@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - Hospital Registration</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #0b7285;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #0b7285;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 90px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0b7285;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #0b7285;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #095c6b;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #0b7285;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>QueueCare</h1>
+    <a href="index.html">Home</a>
+</header>
+
+<div class="container">
+
+    <h2>Hospital Registration</h2>
+
+    <form id="hospitalForm">
+
+        <div class="form-group">
+            <label for="hospitalName">Hospital Name</label>
+            <input
+                type="text"
+                id="hospitalName"
+                name="hospitalName"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="hospitalEmail">Hospital Email</label>
+            <input
+                type="email"
+                id="hospitalEmail"
+                name="hospitalEmail"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="hospitalPhone">Phone Number</label>
+            <input
+                type="tel"
+                id="hospitalPhone"
+                name="hospitalPhone"
+                maxlength="10"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="hospitalAddress">Hospital Address</label>
+            <textarea
+                id="hospitalAddress"
+                name="hospitalAddress"
+                required
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="hospitalPassword">Password</label>
+            <input
+                type="password"
+                id="hospitalPassword"
+                name="hospitalPassword"
+                minlength="6"
+                required
+            >
+        </div>
+
+        <button type="submit">
+            Register Hospital
+        </button>
+
+        <div id="message"></div>
+
+    </form>
+
+    <div class="login-link">
+        Already registered?
+        <a href="hospital login.html">Login here</a>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("hospitalForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const message = document.getElementById("message");
+
+    const name = document.getElementById("hospitalName").value.trim();
+    const email = document.getElementById("hospitalEmail").value.trim();
+    const phone = document.getElementById("hospitalPhone").value.trim();
+    const address = document.getElementById("hospitalAddress").value.trim();
+    const password = document.getElementById("hospitalPassword").value;
+
+    message.style.color = "#0b7285";
+    message.textContent = "Registering hospital...";
+
+    try {
+
+        const response = await fetch("/register-hospital", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                password: password
+            })
+
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            message.style.color = "green";
+
+            message.textContent =
+                "Hospital registered successfully! Hospital ID: "
+                + result.hospitalId;
+
+            document.getElementById("hospitalForm").reset();
+
+        } else {
+
+            message.style.color = "red";
+
+            message.textContent = result.message;
+
+        }
+
+    } catch (error) {
+
+        console.error("Registration error:", error);
+
+        message.style.color = "red";
+
+        message.textContent =
+            "Unable to connect to QueueCare server.";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

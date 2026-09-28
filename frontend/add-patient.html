@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueCare - Add Patient</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: white;
+            padding: 20px 7%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 35px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        🏥 QueueCare
+    </div>
+
+</header>
+
+<div class="container">
+
+    <h1>Add Patient</h1>
+
+    <p class="subtitle">
+        Add a patient to the hospital queue.
+    </p>
+
+    <label for="patientName">
+        Patient Name
+    </label>
+
+    <input
+        type="text"
+        id="patientName"
+        placeholder="Enter patient name"
+    >
+
+    <label for="age">
+        Age
+    </label>
+
+    <input
+        type="number"
+        id="age"
+        placeholder="Enter patient age"
+        min="1"
+        max="120"
+    >
+
+    <label for="phone">
+        Phone Number
+    </label>
+
+    <input
+        type="tel"
+        id="phone"
+        placeholder="Enter 10-digit mobile number"
+        maxlength="10"
+        inputmode="numeric"
+    >
+
+    <label for="doctor">
+        Select Doctor
+    </label>
+
+    <select id="doctor">
+
+        <option value="">
+            Choose Doctor
+        </option>
+
+        <option value="General Physician">
+            General Physician
+        </option>
+
+        <option value="Cardiologist">
+            Cardiologist
+        </option>
+
+        <option value="Orthopedic">
+            Orthopedic
+        </option>
+
+        <option value="Dermatologist">
+            Dermatologist
+        </option>
+
+    </select>
+
+    <button
+        id="addPatientButton"
+        onclick="addPatient()"
+    >
+        Add Patient to Queue
+    </button>
+
+    <a
+        href="hospital-dashboard.html"
+        class="back"
+    >
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+<script>
+
+/* =====================================
+   HOSPITAL LOGIN CHECK
+===================================== */
+
+const hospitalLoggedIn =
+    localStorage.getItem("hospitalLoggedIn");
+
+if (hospitalLoggedIn !== "true") {
+
+    window.location.href =
+        "hospital login.html";
+
+}
+
+
+/* =====================================
+   ADD PATIENT
+===================================== */
+
+async function addPatient() {
+
+    const name =
+        document
+        .getElementById("patientName")
+        .value
+        .trim();
+
+    const age =
+        document
+        .getElementById("age")
+        .value
+        .trim();
+
+    const phone =
+        document
+        .getElementById("phone")
+        .value
+        .trim();
+
+    const doctor =
+        document
+        .getElementById("doctor")
+        .value;
+
+    const button =
+        document
+        .getElementById("addPatientButton");
+
+
+    /* =================================
+       VALIDATION
+    ================================= */
+
+    if (
+        name === "" ||
+        age === "" ||
+        phone === "" ||
+        doctor === ""
+    ) {
+
+        alert("Please fill all details.");
+
+        return;
+
+    }
+
+
+    const ageNumber =
+        Number(age);
+
+    if (
+        ageNumber < 1 ||
+        ageNumber > 120
+    ) {
+
+        alert("Please enter a valid age.");
+
+        return;
+
+    }
+
+
+    const phonePattern =
+        /^[6-9][0-9]{9}$/;
+
+    if (
+        !phonePattern.test(phone)
+    ) {
+
+        alert(
+            "Please enter a valid 10-digit Indian mobile number."
+        );
+
+        return;
+
+    }
+
+
+    /* =================================
+       GET HOSPITAL DATA
+    ================================= */
+
+    const hospitalData =
+        JSON.parse(
+            localStorage.getItem("hospitalData")
+        );
+
+
+    if (
+        !hospitalData ||
+        !hospitalData.id
+    ) {
+
+        alert(
+            "Hospital information not found. Please login again."
+        );
+
+        window.location.href =
+            "hospital login.html";
+
+        return;
+
+    }
+
+
+    const hospitalId =
+        Number(hospitalData.id);
+
+
+    /* =================================
+       SEND TO BACKEND
+    ================================= */
+
+    button.disabled = true;
+    button.innerText = "Adding Patient...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/live-queue",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        hospitalId:
+                            hospitalId,
+
+                        patient:
+                            name,
+
+                        phone:
+                            phone,
+
+                        doctor:
+                            doctor
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        /* =================================
+           BACKEND ERROR
+        ================================= */
+
+        if (!response.ok || !data.success) {
+
+            alert(
+                data.message ||
+                "Unable to add patient."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================
+           SUCCESS
+        ================================= */
+
+        alert(
+            "Patient added successfully!\n\n" +
+            "Hospital: " +
+            data.hospitalName +
+            "\n" +
+            "Doctor: " +
+            doctor +
+            "\n" +
+            "Token: " +
+            data.token
+        );
+
+
+        /* =================================
+           CLEAR FORM
+        ================================= */
+
+        document.getElementById(
+            "patientName"
+        ).value = "";
+
+        document.getElementById(
+            "age"
+        ).value = "";
+
+        document.getElementById(
+            "phone"
+        ).value = "";
+
+        document.getElementById(
+            "doctor"
+        ).value = "";
+
+
+        /* =================================
+           GO TO DASHBOARD
+        ================================= */
+
+        window.location.href =
+            "hospital-dashboard.html";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Add patient error:",
+            error
+        );
+
+        alert(
+            "Unable to connect to QueueCare server."
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+        button.innerText =
+            "Add Patient to Queue";
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

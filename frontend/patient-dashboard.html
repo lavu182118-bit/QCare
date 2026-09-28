@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QCare - Patient Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        header {
+            width: 100%;
+            background: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .logout {
+            display: inline-block;
+            color: #ef4444;
+            background: #fff1f2;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 10px 18px;
+            border-radius: 9px;
+            border: 1px solid #fecdd3;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .logout:hover {
+            background: #fee2e2;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .main-token {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+            border: 1px solid #eef2f7;
+        }
+
+        .main-token h3 {
+            color: #6b7280;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .token {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            color: #15803d;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border: 1px solid #eef2f7;
+        }
+
+        .card h3 {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .queue-card {
+            background: white;
+            padding: 28px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border: 1px solid #eef2f7;
+        }
+
+        .queue-card h2 {
+            font-size: 21px;
+            margin-bottom: 20px;
+        }
+
+        .queue-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .queue-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .queue-box h3 {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .queue-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .notification-card {
+            background: white;
+            padding: 28px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border: 1px solid #eef2f7;
+        }
+
+        .notification-card h2 {
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .notification {
+            padding: 16px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 20px;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+        .secondary {
+            background: #e8f0fe;
+            color: #2563eb;
+        }
+
+        @media (max-width: 750px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .queue-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            header {
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .logout {
+                padding: 9px 13px;
+                font-size: 14px;
+            }
+
+            .container {
+                margin: 25px auto;
+            }
+
+            .welcome h1 {
+                font-size: 27px;
+            }
+
+            .token {
+                font-size: 40px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🏥 QCare
+    </div>
+
+    <a
+        href="#"
+        class="logout"
+        onclick="logoutPatient(); return false;">
+
+        Logout
+
+    </a>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="welcome">
+
+        <h1>
+            Patient Dashboard
+        </h1>
+
+        <p>
+            Track your hospital appointment and queue status in real time.
+        </p>
+
+    </div>
+
+
+    <div class="main-token">
+
+        <h3>
+            Your Token
+        </h3>
+
+        <div
+            class="token"
+            id="token">
+
+            --
+
+        </div>
+
+        <span
+            class="status"
+            id="status">
+
+            Waiting
+
+        </span>
+
+    </div>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                Doctor
+            </h3>
+
+            <p id="doctor">
+                --
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Hospital
+            </h3>
+
+            <p id="hospital">
+                --
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Estimated Wait
+            </h3>
+
+            <p id="waitTime">
+                --
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="queue-card">
+
+        <h2>
+            Queue Status
+        </h2>
+
+
+        <div class="queue-info">
+
+
+            <div class="queue-box">
+
+                <h3>
+                    Patients Ahead
+                </h3>
+
+                <div
+                    class="queue-number"
+                    id="patientsAhead">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-box">
+
+                <h3>
+                    Current Queue Token
+                </h3>
+
+                <div
+                    class="queue-number"
+                    id="currentToken">
+
+                    --
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="notification-card">
+
+        <h2>
+            🔔 Notifications
+        </h2>
+
+        <div
+            class="notification"
+            id="notification">
+
+            No new notifications.
+
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <a
+            href="booking.html"
+            class="button">
+
+            ➕ Book Appointment
+
+        </a>
+
+
+        <a
+            href="my-queue.html"
+            class="button secondary">
+
+            📋 My Queue
+
+        </a>
+
+
+        <a
+            href="appointment-history.html"
+            class="button secondary">
+
+            🕘 Appointment History
+
+        </a>
+
+
+        <a
+            href="patient-profile.html"
+            class="button secondary">
+
+            👤 My Profile
+
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================
+   LOGIN / PATIENT CHECK
+===================================== */
+
+const currentPatient =
+    JSON.parse(
+        localStorage.getItem(
+            "currentPatient"
+        )
+    );
+
+
+if (!currentPatient) {
+
+    window.location.href =
+        "patient-login.html";
+
+}
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+function logoutPatient() {
+
+    localStorage.removeItem(
+        "currentPatient"
+    );
+
+    localStorage.removeItem(
+        "patientLoggedIn"
+    );
+
+    window.location.href =
+        "patient-login.html";
+
+}
+
+
+/* =====================================
+   LOAD DASHBOARD
+===================================== */
+
+async function loadDashboard() {
+
+    const patient =
+        JSON.parse(
+            localStorage.getItem(
+                "currentPatient"
+            )
+        );
+
+
+    if (!patient) {
+
+        return;
+
+    }
+
+
+    /* ===============================
+       BASIC DETAILS
+    =============================== */
+
+    document.getElementById(
+        "token"
+    ).textContent =
+        patient.token || "--";
+
+
+    document.getElementById(
+        "doctor"
+    ).textContent =
+        patient.doctor || "--";
+
+
+    document.getElementById(
+        "hospital"
+    ).textContent =
+        patient.hospital || "--";
+
+
+    /* ===============================
+       GET HOSPITAL ID
+    =============================== */
+
+    try {
+
+        const hospitalResponse =
+            await fetch("/hospitals");
+
+        const hospitalData =
+            await hospitalResponse.json();
+
+
+        if (
+            !hospitalData.success ||
+            !hospitalData.hospitals
+        ) {
+
+            throw new Error(
+                "Unable to load hospitals"
+            );
+
+        }
+
+
+        const hospital =
+            hospitalData.hospitals.find(
+                item =>
+                    item.name &&
+                    patient.hospital &&
+                    item.name.trim().toLowerCase()
+                    ===
+                    patient.hospital.trim().toLowerCase()
+            );
+
+
+        if (!hospital) {
+
+            throw new Error(
+                "Hospital not found"
+            );
+
+        }
+
+
+        /* ===============================
+           GET MYSQL LIVE QUEUE
+        =============================== */
+
+        const queueResponse =
+            await fetch(
+                "/live-queue/" +
+                hospital.id
+            );
+
+
+        const queueData =
+            await queueResponse.json();
+
+
+        if (
+            !queueData.success ||
+            !queueData.queue
+        ) {
+
+            throw new Error(
+                "Unable to load queue"
+            );
+
+        }
+
+
+        /* ===============================
+           SAME DOCTOR QUEUE
+        =============================== */
+
+        const doctorQueue =
+            queueData.queue.filter(
+                item =>
+
+                    item.doctor ===
+                    patient.doctor
+            );
+
+
+        /* ===============================
+           FIND PATIENT
+        =============================== */
+
+        const patientIndex =
+            doctorQueue.findIndex(
+                item =>
+                    item.token ===
+                    patient.token
+            );
+
+
+        /* ===============================
+           WAITING PATIENTS
+        =============================== */
+
+        const waitingQueue =
+            doctorQueue.filter(
+                item =>
+                    item.status ===
+                    "Waiting"
+            );
+
+
+        /* ===============================
+           PATIENT POSITION
+        =============================== */
+
+        let patientsAhead = 0;
+
+
+        if (
+            patientIndex >= 0
+        ) {
+
+            const currentPatientRecord =
+                doctorQueue[
+                    patientIndex
+                ];
+
+
+            if (
+                currentPatientRecord.status
+                ===
+                "Waiting"
+            ) {
+
+                patientsAhead =
+                    doctorQueue
+                        .slice(
+                            0,
+                            patientIndex
+                        )
+                        .filter(
+                            item =>
+                                item.status
+                                ===
+                                "Waiting"
+                        )
+                        .length;
+
+
+                document.getElementById(
+                    "status"
+                ).textContent =
+                    "Waiting";
+
+            } else {
+
+                document.getElementById(
+                    "status"
+                ).textContent =
+                    currentPatientRecord.status;
+
+            }
+
+        } else {
+
+            document.getElementById(
+                "status"
+            ).textContent =
+                "Called";
+
+        }
+
+
+        document.getElementById(
+            "patientsAhead"
+        ).textContent =
+            patientsAhead;
+
+
+        /* ===============================
+           CURRENT QUEUE TOKEN
+        =============================== */
+
+        const currentWaiting =
+            doctorQueue.find(
+                item =>
+                    item.status ===
+                    "Waiting"
+            );
+
+
+        if (currentWaiting) {
+
+            document.getElementById(
+                "currentToken"
+            ).textContent =
+                currentWaiting.token;
+
+        } else {
+
+            document.getElementById(
+                "currentToken"
+            ).textContent =
+                "--";
+
+        }
+
+
+        /* ===============================
+           ESTIMATED WAIT
+        =============================== */
+
+        if (
+            patientIndex >= 0 &&
+            doctorQueue[
+                patientIndex
+            ].status === "Waiting"
+        ) {
+
+            document.getElementById(
+                "waitTime"
+            ).textContent =
+                patientsAhead * 5 +
+                " min";
+
+        } else {
+
+            document.getElementById(
+                "waitTime"
+            ).textContent =
+                "Your turn";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard queue error:",
+            error
+        );
+
+        document.getElementById(
+            "patientsAhead"
+        ).textContent =
+            "--";
+
+        document.getElementById(
+            "currentToken"
+        ).textContent =
+            "--";
+
+        document.getElementById(
+            "waitTime"
+        ).textContent =
+            "Unable to load";
+
+    }
+
+
+    /* ===============================
+       BACKEND NOTIFICATION
+    =============================== */
+
+    try {
+
+        const response =
+            await fetch(
+                "/notification/" +
+                encodeURIComponent(
+                    patient.token
+                )
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.success &&
+            data.notification
+        ) {
+
+            document.getElementById(
+                "notification"
+            ).textContent =
+                data.notification.message;
+
+            return;
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Backend notification check failed."
+        );
+
+    }
+
+
+    /* ===============================
+       TOKEN BASED LOCAL NOTIFICATION
+    =============================== */
+
+    const notifications =
+        JSON.parse(
+            localStorage.getItem(
+                "patientNotifications"
+            )
+        ) || {};
+
+
+    const notification =
+        notifications[
+            patient.token
+        ];
+
+
+    if (
+        notification
+    ) {
+
+        document.getElementById(
+            "notification"
+        ).textContent =
+            notification.message;
+
+    } else {
+
+        document.getElementById(
+            "notification"
+        ).textContent =
+            "No new notifications.";
+
+    }
+
+}
+
+
+/* =====================================
+   INITIAL LOAD
+===================================== */
+
+loadDashboard();
+
+
+/* =====================================
+   AUTO REFRESH
+===================================== */
+
+setInterval(
+    loadDashboard,
+    3000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
