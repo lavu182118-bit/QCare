@@ -100,7 +100,7 @@
             color: #2563eb;
         }
 
-        .completed-badge {
+        .status-badge {
             background: #dcfce7;
             color: #15803d;
             padding: 7px 13px;
@@ -153,6 +153,47 @@
         }
 
         .empty p {
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .loading {
+            background: white;
+            padding: 45px 30px;
+            text-align: center;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+        }
+
+        .loading-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .loading p {
+            color: #6b7280;
+        }
+
+        .error {
+            background: white;
+            padding: 45px 30px;
+            text-align: center;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+            border: 1px solid #fee2e2;
+        }
+
+        .error-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .error h2 {
+            margin-bottom: 10px;
+            color: #b91c1c;
+        }
+
+        .error p {
             color: #6b7280;
             font-size: 15px;
         }
@@ -254,7 +295,21 @@
     </div>
 
 
-    <div id="historyContainer"></div>
+    <div id="historyContainer">
+
+        <div class="loading">
+
+            <div class="loading-icon">
+                ⏳
+            </div>
+
+            <p>
+                Loading appointment history...
+            </p>
+
+        </div>
+
+    </div>
 
 
     <a
@@ -272,53 +327,42 @@
 <script>
 
 
-function loadHistory() {
+async function loadHistory() {
+
+    const container =
+        document.getElementById("historyContainer");
 
 
-    const history =
-        JSON.parse(
-            localStorage.getItem(
-                "appointmentHistory"
-            )
-        ) || [];
-
+    /*
+     * GET CURRENT LOGGED-IN PATIENT
+     */
 
     const currentPatient =
         JSON.parse(
-            localStorage.getItem(
-                "currentPatient"
-            )
-        ) || null;
-
-
-    const container =
-        document.getElementById(
-            "historyContainer"
+            localStorage.getItem("currentPatient")
         );
 
 
     /*
-     * SHOW EMPTY MESSAGE
-     * IF NO HISTORY EXISTS
+     * CHECK PATIENT LOGIN
      */
 
-    if (history.length === 0) {
+    if (!currentPatient) {
 
         container.innerHTML = `
 
-            <div class="empty">
+            <div class="error">
 
-                <div class="empty-icon">
-                    📋
+                <div class="error-icon">
+                    🔐
                 </div>
 
                 <h2>
-                    No Appointment History
+                    Patient Login Required
                 </h2>
 
                 <p>
-                    Your completed hospital visits
-                    will appear here.
+                    Please login again to view your appointment history.
                 </p>
 
             </div>
@@ -331,104 +375,191 @@ function loadHistory() {
 
 
     /*
-     * FILTER HISTORY FOR CURRENT PATIENT
+     * GET PATIENT ID
      */
 
-    let patientHistory = history;
+    const patientId =
+        currentPatient.id ||
+        currentPatient.patient_id;
 
 
-    if (currentPatient) {
+    if (!patientId) {
 
-        patientHistory =
-            history.filter(
-                appointment =>
+        container.innerHTML = `
 
-                    appointment.token ===
-                    currentPatient.token
+            <div class="error">
 
-                    ||
+                <div class="error-icon">
+                    ⚠️
+                </div>
 
-                    (
-                        appointment.name ===
-                        currentPatient.name
+                <h2>
+                    Patient ID Not Found
+                </h2>
 
-                        &&
+                <p>
+                    Please login again and try again.
+                </p>
 
-                        appointment.hospital ===
-                        currentPatient.hospital
+            </div>
 
-                    )
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * FETCH APPOINTMENTS FROM SERVER
+     */
+
+    try {
+
+        const response =
+            await fetch(
+                `/appointments/${patientId}`
             );
 
-    }
+
+        const data =
+            await response.json();
 
 
-    /*
-     * IF CURRENT PATIENT HAS
-     * NO HISTORY
-     */
+        if (!response.ok || !data.success) {
 
-    if (patientHistory.length === 0) {
+            throw new Error(
+                data.message ||
+                "Unable to load appointment history."
+            );
 
-        container.innerHTML = `
+        }
 
-            <div class="empty">
 
-                <div class="empty-icon">
-                    📋
+        const appointments =
+            data.appointments || [];
+
+
+        /*
+         * NO APPOINTMENTS
+         */
+
+        if (appointments.length === 0) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    <h2>
+                        No Appointment History
+                    </h2>
+
+                    <p>
+                        Your appointments will appear here.
+                    </p>
+
                 </div>
 
-                <h2>
-                    No Appointment History
-                </h2>
+            `;
 
-                <p>
-                    Your completed hospital visits
-                    will appear here.
-                </p>
+            return;
 
-            </div>
-
-        `;
-
-        return;
-
-    }
+        }
 
 
-    /*
-     * DISPLAY HISTORY
-     */
+        /*
+         * CLEAR LOADING MESSAGE
+         */
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
 
-    patientHistory
-        .slice()
-        .reverse()
-        .forEach(
+        /*
+         * DISPLAY ALL APPOINTMENTS
+         */
+
+        appointments.forEach(
             appointment => {
 
+
                 const card =
-                    document.createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
 
                 card.className =
                     "history-card";
 
 
+                /*
+                 * STATUS
+                 */
+
+                const status =
+                    appointment.status ||
+                    "Waiting";
+
+
+                /*
+                 * DATE & TIME
+                 */
+
+                let dateTime = "-";
+
+
+                if (appointment.appointment_time) {
+
+                    const date =
+                        new Date(
+                            appointment.appointment_time
+                        );
+
+
+                    if (!isNaN(date.getTime())) {
+
+                        dateTime =
+                            date.toLocaleString(
+                                "en-IN",
+                                {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                }
+                            );
+
+                    }
+
+                }
+
+
+                /*
+                 * HOSPITAL NAME
+                 */
+
+                const hospitalName =
+                    appointment.hospital_name ||
+                    "Hospital";
+
+
+                /*
+                 * CREATE CARD
+                 */
+
                 card.innerHTML = `
 
                     <div class="history-header">
 
                         <div class="token">
-                            🎫 ${appointment.token}
+                            🎫 ${appointment.token || "-"}
                         </div>
 
-                        <div class="completed-badge">
-                            ✓ ${appointment.status || "Completed"}
+                        <div class="status-badge">
+                            ${status}
                         </div>
 
                     </div>
@@ -444,7 +575,7 @@ function loadHistory() {
                             </p>
 
                             <strong>
-                                ${appointment.hospital || "-"}
+                                ${hospitalName}
                             </strong>
 
                         </div>
@@ -470,7 +601,7 @@ function loadHistory() {
                             </p>
 
                             <strong>
-                                ${appointment.name || "-"}
+                                ${currentPatient.name || currentPatient.patient_name || "-"}
                             </strong>
 
                         </div>
@@ -483,7 +614,7 @@ function loadHistory() {
                             </p>
 
                             <strong>
-                                ${appointment.time || "-"}
+                                ${dateTime}
                             </strong>
 
                         </div>
@@ -494,15 +625,51 @@ function loadHistory() {
                 `;
 
 
-                container.appendChild(
-                    card
-                );
+                container.appendChild(card);
 
             }
         );
 
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Appointment history error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                <div class="error-icon">
+                    ⚠️
+                </div>
+
+                <h2>
+                    Unable to Load History
+                </h2>
+
+                <p>
+                    Please check your connection
+                    and try again.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
+
+/*
+ * LOAD HISTORY WHEN PAGE OPENS
+ */
 
 loadHistory();
 

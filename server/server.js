@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 const cors = require("cors");
 const path = require("path");
 const bcrypt = require("bcrypt");
-
+require("dotenv").config();
 const app = express();
 
 const PORT = 3000;
@@ -52,12 +52,15 @@ app.get("/check-patient-phone/:phone", (req, res) => {
 // ===============================
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "queuecare"
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: {
+        minVersion: "TLSv1.2"
+    }
 });
-
 db.connect((err) => {
 
     if (err) {
@@ -2088,20 +2091,28 @@ app.put("/live-queue/complete", (req, res) => {
 
     // Find the patient currently in consultation
     const findSql = `
-        SELECT
-            id,
-            patient_id,
-            hospital_id,
-            patient_name,
-            token
-        FROM live_queue
-        WHERE hospital_id = ?
-        AND doctor = ?
-        AND status = 'In Consultation'
-        AND DATE(appointment_time) = CURDATE()
-        ORDER BY id ASC
-        LIMIT 1
-    `;
+    SELECT
+        lq.id,
+        lq.patient_id,
+        lq.hospital_id,
+        lq.patient_name,
+        lq.doctor,
+        lq.token,
+        lq.status
+    FROM live_queue lq
+    INNER JOIN appointments a
+        ON a.patient_id = lq.patient_id
+        AND a.hospital_id = lq.hospital_id
+        AND a.doctor = lq.doctor
+        AND a.token = lq.token
+    WHERE lq.hospital_id = ?
+    AND lq.doctor = ?
+    AND lq.status = 'In Consultation'
+    AND a.status <> 'Completed'
+    AND DATE(lq.appointment_time) = CURDATE()
+    ORDER BY lq.id DESC
+    LIMIT 1
+`;
 
     db.query(
         findSql,
