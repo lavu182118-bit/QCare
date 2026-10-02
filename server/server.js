@@ -1,3 +1,4 @@
+const { Resend } = require("resend");
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -5,7 +6,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const app = express();
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 const PORT = 3000;
 
 // ===============================
@@ -3379,46 +3380,67 @@ app.post("/reset-password", async (req, res) => {
 
 const otpStore = {};
 
-app.post("/send-otp", (req, res) => {
+app.post("/send-otp", async (req, res) => {
 
-    const {
-        email
-    } = req.body;
+    const { email } = req.body;
 
     if (!email) {
-
         return res.status(400).json({
             success: false,
-            message:
-                "Email is required."
+            message: "Email is required."
         });
-
     }
 
-    const otp =
-        Math.floor(
-            100000 +
-            Math.random() * 900000
-        ).toString();
+    const otp = Math.floor(
+        100000 + Math.random() * 900000
+    ).toString();
 
     otpStore[email] = {
         otp: otp,
-        expires:
-            Date.now() + 5 * 60 * 1000
+        expires: Date.now() + 5 * 60 * 1000
     };
 
-    console.log(
-        `OTP for ${email}: ${otp}`
-    );
+    try {
 
-    res.json({
-        success: true,
-        message:
-            "OTP generated successfully."
-    });
+        const { data, error } = await resend.emails.send({
+            from: "QCare <onboarding@resend.dev>",
+            to: [email],
+            subject: "QCare Password Reset OTP",
+            html: `
+                <h2>QCare Password Reset</h2>
+                <p>Your OTP is:</p>
+                <h1>${otp}</h1>
+                <p>This OTP is valid for 5 minutes.</p>
+                <p>If you did not request this, please ignore this email.</p>
+            `
+        });
 
+        if (error) {
+            console.error("Resend email error:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: "Unable to send OTP email."
+            });
+        }
+
+        console.log("OTP email sent successfully:", data?.id);
+
+        res.json({
+            success: true,
+            message: "OTP sent to your email."
+        });
+
+    } catch (error) {
+
+        console.error("OTP email error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to send OTP."
+        });
+    }
 });
-
 app.post("/verify-otp", (req, res) => {
 
     const {
