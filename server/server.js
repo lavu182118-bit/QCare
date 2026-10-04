@@ -2758,7 +2758,6 @@ app.post("/request-reactivation", (req, res) => {
 // ======================================================
 // ADMIN - GET REACTIVATION REQUESTS
 // ======================================================
-
 app.get("/admin/reactivation-requests", (req, res) => {
 
     const sql = `
@@ -2809,6 +2808,7 @@ app.get("/admin/reactivation-requests", (req, res) => {
     );
 
 });
+
 
 // ======================================================
 // ADMIN - APPROVE REACTIVATION
@@ -2889,7 +2889,7 @@ app.put(
                 db.query(
                     `
                         UPDATE hospitals
-                        SET status = 'Active'
+                        SET status = 'Active',
                         reactivation_status=NULL
                         WHERE id = ?
                         AND status = 'Deactivated'
@@ -2929,8 +2929,7 @@ app.put(
                             `
                                 UPDATE reactivation_requests
                                 SET
-                                    status = 'Approved',
-                                    reviewed_at = CURRENT_TIMESTAMP
+                                    status = 'Approved'
                                 WHERE id = ?
                             `,
                             [requestId],
