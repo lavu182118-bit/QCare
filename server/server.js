@@ -2765,8 +2765,7 @@ app.get("/admin/reactivation-requests", (req, res) => {
             rr.id,
             rr.hospital_id,
             rr.status,
-            rr.requested_at,
-            rr.reviewed_at,
+            rr.created_at,
             h.hospital_id AS hospital_code,
             h.name,
             h.email,
@@ -2779,36 +2778,28 @@ app.get("/admin/reactivation-requests", (req, res) => {
         ORDER BY rr.id DESC
     `;
 
-    db.query(
-        sql,
-        (err, results) => {
+    db.query(sql, (err, results) => {
 
-            if (err) {
+        if (err) {
+            console.error(
+                "Reactivation request loading error:",
+                err
+            );
 
-                console.error(
-                    "Reactivation request loading error:",
-                    err
-                );
-
-                return res.status(500).json({
-                    success: false,
-                    message:
-                        "Unable to load reactivation requests."
-                });
-
-            }
-
-            res.json({
-                success: true,
-                requests:
-                    results
+            return res.status(500).json({
+                success: false,
+                message: "Unable to load reactivation requests."
             });
-
         }
-    );
+
+        res.json({
+            success: true,
+            requests: results
+        });
+
+    });
 
 });
-
 
 // ======================================================
 // ADMIN - APPROVE REACTIVATION
