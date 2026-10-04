@@ -2328,23 +2328,20 @@ app.post("/admin-login", (req, res) => {
         SELECT
             id,
             username,
+            password,
             name,
             role,
             status
         FROM admins
         WHERE username = ?
-        AND password = ?
         AND status = 'Active'
         LIMIT 1
     `;
 
     db.query(
         sql,
-        [
-            username,
-            password
-        ],
-        (err, results) => {
+        [username],
+        async (err, results) => {
 
             if (err) {
 
@@ -2374,13 +2371,48 @@ app.post("/admin-login", (req, res) => {
             const admin =
                 results[0];
 
-            res.json({
-                success: true,
-                message:
-                    "Admin login successful!",
-                admin:
-                    admin
-            });
+            try {
+
+                const passwordMatch =
+                    await bcrypt.compare(
+                        password,
+                        admin.password
+                    );
+
+                if (!passwordMatch) {
+
+                    return res.status(401).json({
+                        success: false,
+                        message:
+                            "Invalid username or password."
+                    });
+
+                }
+
+                delete admin.password;
+
+                return res.json({
+                    success: true,
+                    message:
+                        "Admin login successful!",
+                    admin:
+                        admin
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "Admin password verification error:",
+                    error
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Authentication error."
+                });
+
+            }
 
         }
     );
