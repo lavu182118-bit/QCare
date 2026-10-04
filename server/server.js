@@ -2890,6 +2890,7 @@ app.put(
                     `
                         UPDATE hospitals
                         SET status = 'Active'
+                        reactivation_status=NULL
                         WHERE id = ?
                         AND status = 'Deactivated'
                     `,
