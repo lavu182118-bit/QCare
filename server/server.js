@@ -730,7 +730,7 @@ app.post("/patient-login", (req, res) => {
 
     db.query(sql, [name.trim(), phone.trim()], (err, results) => {
         if (err) {
-            console.error("PATIENT LOGIN SQL ERROR:", err);
+            console.error("PATIENT LOGIN SQL ERROR:", err.code, err.message);
 
             return res.status(500).json({
                 success: false,
