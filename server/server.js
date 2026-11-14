@@ -57,6 +57,7 @@ const db = mysql.createPool({
     ssl: {
         minVersion: "TLSv1.2"
     },
+    enableCleartextPlugin: true,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
