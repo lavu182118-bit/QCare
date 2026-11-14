@@ -48,22 +48,21 @@ app.get("/check-patient-phone/:phone", (req, res) => {
     });
 
 });
-// ===============================
-// MYSQL CONNECTION
-// ===============================
-
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     ssl: {
         minVersion: "TLSv1.2"
-    }
+    },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
-db.connect((err) => {
 
+db.getConnection((err, connection) => {
     if (err) {
         console.error("MySQL connection failed:", err);
         return;
@@ -71,8 +70,8 @@ db.connect((err) => {
 
     console.log("MySQL connected successfully!");
 
+    connection.release();
 });
-
 // ===============================
 // HOME
 // ===============================
@@ -711,7 +710,6 @@ app.post("/patient-register", (req, res) => {
 });
 
 app.post("/patient-login", (req, res) => {
-
     const { name, phone } = req.body;
 
     if (!name || !phone) {
@@ -722,46 +720,37 @@ app.post("/patient-login", (req, res) => {
     }
 
     const sql = `
-        SELECT *
+        SELECT id, name, phone, age, gender
         FROM patients
-        WHERE name = ? AND phone = ?
+        WHERE TRIM(name) = TRIM(?)
+        AND TRIM(phone) = TRIM(?)
         LIMIT 1
     `;
 
-    db.query(sql, [name, phone], (err, results) => {
-
+    db.query(sql, [name.trim(), phone.trim()], (err, results) => {
         if (err) {
-
-            console.error("Patient login error:", err);
+            console.error("PATIENT LOGIN SQL ERROR:", err);
 
             return res.status(500).json({
                 success: false,
-                message: "Unable to login."
+                message: err.message,
+                errorCode: err.code
             });
-
         }
 
         if (results.length === 0) {
-
             return res.status(401).json({
                 success: false,
                 message: "Patient not found. Check your name and phone number."
             });
-
         }
 
-        const patient = results[0];
-
-        delete patient.password;
-
-        res.json({
+        return res.json({
             success: true,
             message: "Patient login successful.",
-            patient: patient
+            patient: results[0]
         });
-
     });
-
 });
 // ======================================================
 // LIVE QUEUE - ADD PATIENT
