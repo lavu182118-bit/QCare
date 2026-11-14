@@ -711,6 +711,7 @@ app.post("/patient-register", (req, res) => {
 });
 
 app.post("/patient-login", (req, res) => {
+    console.log("PATIENT LOGIN API HIT");
     const { name, phone } = req.body;
 
     if (!name || !phone) {
