@@ -1,4 +1,3 @@
-const { Resend } = require("resend");
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -6,8 +5,37 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const app = express();
-const resend = new Resend(process.env.RESEND_API_KEY);
 const PORT = 3000;
+const sendBrevoEmail = async ({ to, subject, html }) => {
+    const response = await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+            method: "POST",
+            headers: {
+                "accept": "application/json",
+                "api-key": process.env.BREVO_API_KEY,
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                sender: {
+                    name: "QCare",
+                    email: process.env.BREVO_SENDER_EMAIL
+                },
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: html
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "Brevo email failed");
+    }
+
+    return result;
+};
 
 // ===============================
 // MIDDLEWARE
@@ -3415,32 +3443,21 @@ app.post("/send-otp", async (req, res) => {
     };
 
     try {
+const result = await sendBrevoEmail({
+    to: email,
+    subject: "QCare Password Reset OTP",
+    html: `
+        <h2>QCare Password Reset</h2>
+        <p>Your OTP is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP is valid for 5 minutes.</p>
+        <p>If you did not request this, please ignore this email.</p>
+    `
+});
 
-        const { data, error } = await resend.emails.send({
-            from: "QCare <onboarding@resend.dev>",
-            to: [email],
-            subject: "QCare Password Reset OTP",
-            html: `
-                <h2>QCare Password Reset</h2>
-                <p>Your OTP is:</p>
-                <h1>${otp}</h1>
-                <p>This OTP is valid for 5 minutes.</p>
-                <p>If you did not request this, please ignore this email.</p>
-            `
-        });
+console.log("Brevo email sent successfully:", result.messageId);
 
-        if (error) {
-            console.error("Resend email error:", error);
-
-            return res.status(500).json({
-                success: false,
-                message: "Unable to send OTP email."
-            });
-        }
-
-        console.log("OTP email sent successfully:", data?.id);
-
-        res.json({
+                res.json({
             success: true,
             message: "OTP sent to your email."
         });
